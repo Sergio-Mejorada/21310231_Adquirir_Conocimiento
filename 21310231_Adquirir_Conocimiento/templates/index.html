@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Simple</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #chat-box { height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; }
+        .message { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div id="chat-box"></div>
+    <input type="text" id="user-input" placeholder="Escribe tu pregunta">
+    <button onclick="sendQuestion()">Enviar</button>
+
+    <script>
+        const predefinedMessages = [
+            "Hola Bienvenido su Majestad"
+        ];
+
+        // Función para mostrar las preguntas precargadas
+        function loadPredefinedMessages() {
+            predefinedMessages.forEach(message => {
+                document.getElementById('chat-box').innerHTML += 
+                    `<div class="message"><b>Chat:</b> ${message}</div>`;
+            });
+        }
+
+        // Ejecutar la función cuando la página carga
+        window.onload = function() {
+            loadPredefinedMessages();
+        }
+
+        function sendQuestion() {
+            const question = document.getElementById('user-input').value;
+            fetch('/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: question })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('chat-box').innerHTML += 
+                    `<div class="message"><b>Tú:</b> ${question}</div>` +
+                    `<div class="message"><b>Chat:</b> ${data.response}</div>`;
+                document.getElementById('user-input').value = '';
+            });
+        }
+    </script>
+</body>
+</html>
